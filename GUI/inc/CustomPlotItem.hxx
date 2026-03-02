@@ -1,9 +1,11 @@
-#ifndef GUI_CustomPlotItem_Header
-#define GUI_CustomPlotItem_Header
+#ifndef _GUI_CustomPlotItem_Header
+#define _GUI_CustomPlotItem_Header
 
 #include <QtQuick/QQuickPaintedItem>
-#include "qcustomplot.h"
 #include <QColor>
+
+#include <qcustomplot.h>
+
 
 class CustomPlotItem : public QQuickPaintedItem
 {

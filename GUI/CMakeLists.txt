@@ -6,26 +6,35 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+set(QCP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/qcustomplot")
+
 find_package(Qt6 REQUIRED COMPONENTS Quick Widgets PrintSupport)
 
-file(GLOB_RECURSE SOURCES
-	"src/*.cxx"
-	"src/*.cpp"
-	"src/*.c"
+file(GLOB_RECURSE QCP_SOURCES "${QCP_DIR}/src/*.cpp")
+file(GLOB_RECURSE QCP_HEADERS "${QCP_DIR}/inc/*.h")
+
+source_group("3rdparty\\QCustomPlot" FILES ${QCP_SOURCES} ${QCP_HEADERS})
+
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
+    "src/*.cxx"
+    "src/*.cpp"
+    "src/*.c"
 )
 
-file(GLOB_RECURSE HEADERS
-	"inc/*.hxx"
-	"inc/*.hpp"
-	"inc/*.h"
+file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS
+    "inc/*.hxx"
+    "inc/*.hpp"
+    "inc/*.h"
 )
 
-file(GLOB_RECURSE QRC_FILES "resources/*.qrc")
-file(GLOB_RECURSE QML_FILES "resources/qml/*.qml")
+file(GLOB_RECURSE QRC_FILES CONFIGURE_DEPENDS "resources/*.qrc")
+file(GLOB_RECURSE QML_FILES CONFIGURE_DEPENDS "resources/qml/*.qml")
 
 add_executable(GUI WIN32
     ${SOURCES} 
-	${HEADERS}
+    ${HEADERS}
+    ${QCP_SOURCES}
+    ${QCP_HEADERS}
     ${QRC_FILES}
     ${QML_FILES}
 )
@@ -37,6 +46,7 @@ source_group("CMake Rules" REGULAR_EXPRESSION ".*\\.rule$")
 
 target_include_directories(GUI PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
+    ${QCP_DIR}/inc 
 )
 
 target_link_libraries(GUI
