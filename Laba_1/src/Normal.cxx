@@ -2,16 +2,13 @@
 
 #include <cmath>
 #include <string>
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
+#include <numbers>
 
 
 double Normal::Density(double theX) const
 {
     double aX = (theX - myShift) / myScale;
-    return std::exp(-aX * aX / 2.0) / (std::sqrt(2.0 * M_PI) * myScale);
+    return std::exp(-aX * aX / 2.0) / (std::sqrt(2.0 * std::numbers::pi) * myScale);
 }
 
 double Normal::ExpectedValue() const { return myShift; }

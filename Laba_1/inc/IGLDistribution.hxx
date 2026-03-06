@@ -1,19 +1,20 @@
-#ifndef _Laba1_Normal_Header
-#define _Laba1_Normal_Header
+#ifndef _Laba1_IGLDistribution_Header
+#define _Laba1_IGLDistribution_Header
 
 #include <IDistribution.hxx>
 #include <IPersistent.hxx>
 
 
-class Normal : public IDistribution, public IPersistent
+class IGLDistribution : public IDistribution, public IPersistent
 {
 public:
-    Normal(double theShift = 0.0, double theScale = 1.0) :
+    IGLDistribution(double theShift = 0.0, double theScale = 1.0, double theShape = 2.0) :
         myShift(theShift),
-        myScale(theScale > 0 ? theScale : 1.0)
+        myScale(theScale > 0 ? theScale : 1.0),
+        myShape(myShape > 0 ? myShape : 1.0)
     {};
 
-    double Density(double theX) const override;
+    double Density(double x) const override;
     double ExpectedValue() const override;
     double Variance() const override;
     double Asymmetry() const override;
@@ -26,6 +27,7 @@ public:
 private:
     double myShift;
     double myScale;
+    double myShape;
 };
 
 #endif

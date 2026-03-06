@@ -102,6 +102,15 @@ void CustomPlotItem::loadData(const QString& fileUrl, const QColor& color)
         Qt::red, Qt::blue, Qt::green, Qt::magenta, Qt::cyan,
         Qt::darkYellow, Qt::black, Qt::darkRed, Qt::darkBlue, Qt::darkGreen
     };
+
+    QVector<QColor> activeColors;
+    activeColors.append(color);
+    for (const QColor& c : autoColors) {
+        if (c != color) {
+            activeColors.append(c);
+        }
+    }
+
     int blockIndex = 0;
 
     auto commitGraph = [&]() {
@@ -111,13 +120,7 @@ void CustomPlotItem::loadData(const QString& fileUrl, const QColor& color)
 
         graph->setLineStyle(QCPGraph::lsNone);
 
-        QColor graphColor;
-        if (blockIndex == 0) {
-            graphColor = color;
-        }
-        else {
-            graphColor = autoColors[blockIndex % autoColors.size()];
-        }
+        QColor graphColor = activeColors[blockIndex % activeColors.size()];
 
         QCPScatterStyle scatterStyle(QCPScatterStyle::ssDisc, 6);
         scatterStyle.setPen(QPen(graphColor));

@@ -78,19 +78,18 @@ Window {
 
                             model: ListModel {
                                 id: colorModel
-                                ListElement { name: "white"; code: "#ffffff" }
-                                ListElement { name: "black"; code: "#000000" }
                                 ListElement { name: "cyan"; code: "#00ffff" }
-                                ListElement { name: "darkCyan"; code: "#008080" }
+                                ListElement { name: "blue"; code: "#0000ff" }
                                 ListElement { name: "red"; code: "#ff0000" }
+                                ListElement { name: "green"; code: "#00ff00" }
+                                ListElement { name: "black"; code: "#000000" }
+                                ListElement { name: "darkCyan"; code: "#008080" }
                                 ListElement { name: "darkRed"; code: "#800000" }
                                 ListElement { name: "magenta"; code: "#ff00ff" }
                                 ListElement { name: "darkMagenta"; code: "#800080" }
-                                ListElement { name: "green"; code: "#00ff00" }
                                 ListElement { name: "darkGreen"; code: "#008000" }
                                 ListElement { name: "yellow"; code: "#ffff00" }
                                 ListElement { name: "darkYellow"; code: "#808000" }
-                                ListElement { name: "blue"; code: "#0000ff" }
                                 ListElement { name: "darkBlue"; code: "#000080" }
                                 ListElement { name: "gray"; code: "#a0a0a4" }
                                 ListElement { name: "darkGray"; code: "#808080" }
@@ -270,7 +269,7 @@ Window {
                             model: ListModel {
                                 id: formulaModel
                                 ListElement { text: "(w / (2 * sqrt(1 + 2*v*abs(x)))) * exp((w/v) * (1 - sqrt(1 + 2*v*abs(x))))" }
-                                ListElement { text: "(x > a && x <= b) ? (1 / (b - a)) : 0" }
+                                ListElement { text: "(x > a && x <= b) ? (1 / (b - a)) : NaN" }
                                 ListElement { text: "(1 / (sigma * sqrt(2 * PI))) * exp(-pow(x - mu, 2) / (2 * pow(sigma, 2)))" }
                             }
                             textRole: "text"
