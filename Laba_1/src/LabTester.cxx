@@ -72,11 +72,8 @@ void LabTester::TestStats(IDistribution& theDist, const string& theName, const v
         cout << setw(10) << aSize << " | "
             << setw(15) << anEmpiric.Mean() << " | "
             << setw(15) << anEmpiric.Variance() << " | "
-            // Если в Empiric реализованы Asymmetry() и Kurtosis(), раскомментируйте вызовы ниже:
-            // << setw(15) << anEmpiric.Asymmetry() << " | "
-            // << setw(15) << anEmpiric.Kurtosis() << "\n";
-            << setw(15) << "N/A" << " | "
-            << setw(15) << "N/A" << "\n";
+            << setw(15) << anEmpiric.Asymmetry() << " | "
+            << setw(15) << anEmpiric.Kurtosis() << "\n";
     }
 }
 

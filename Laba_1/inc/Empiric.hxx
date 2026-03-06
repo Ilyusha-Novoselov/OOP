@@ -26,6 +26,9 @@ public:
     double Mean() const;
     double Variance() const;
 
+    double Asymmetry() const;
+    double Kurtosis() const;
+
 private:
     std::vector<double> myData;
     std::forward_list<std::pair<IObserver*, int>> myObservers;

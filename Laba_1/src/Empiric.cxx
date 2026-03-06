@@ -81,3 +81,48 @@ double Empiric::Variance() const
 
     return aSum / myData.size();
 }
+
+double Empiric::Asymmetry() const
+{
+    if (myData.size() < 3) {
+        return 0.0;
+    }
+
+    double aMean = Mean();
+    double aVar = Variance();
+
+    // Защита от деления на ноль, если все числа одинаковые
+    if (std::abs(aVar) < 1e-9) return 0.0;
+
+    double aSum = 0.0;
+    for (double x : myData) {
+        aSum += pow(x - aMean, 3.0);
+    }
+
+    double m3 = aSum / myData.size(); // Центральный момент 3-го порядка
+
+    // Формула: m3 / (sigma^3)
+    return m3 / pow(sqrt(aVar), 3.0);
+}
+
+double Empiric::Kurtosis() const
+{
+    if (myData.size() < 4) {
+        return 0.0;
+    }
+
+    double aMean = Mean();
+    double aVar = Variance();
+
+    if (std::abs(aVar) < 1e-9) return 0.0;
+
+    double aSum = 0.0;
+    for (double x : myData) {
+        aSum += pow(x - aMean, 4.0);
+    }
+
+    double m4 = aSum / myData.size(); // Центральный момент 4-го порядка
+
+    // Формула: m4 / (sigma^4) - 3 (минус 3 нужен для эксцесса)
+    return (m4 / (aVar * aVar)) - 3.0;
+}
