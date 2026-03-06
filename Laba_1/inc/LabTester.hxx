@@ -22,6 +22,9 @@ private:
     // ПУНКТ 6.4: Демонстрация паттерна Наблюдатель
     void TestObserver();
 
+    // Проверка табличных значения IGL распределения
+    void TestIGLTable();
+
     // Вспомогательные методы для вывода таблицы Наблюдателя
     std::string FormatBin(double theLower, double theUpper, double theDensity, bool theIsLast, bool theChanged);
     void PrintState(const std::string& theTitle, const Histogram& theH1, const Histogram& theH2,

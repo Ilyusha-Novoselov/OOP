@@ -2,6 +2,7 @@
 #include <cmath>
 #include <string>
 #include <random>
+#include <limits>
 
 // Вспомогательная функция для расчета omega из методички
 static double getOmega(double v) {
@@ -10,6 +11,12 @@ static double getOmega(double v) {
 
 double IGLDistribution::Density(double theX) const
 {
+    // Обработка краевого случая
+    if (std::abs(myShape) <= std::numeric_limits<double>::epsilon()) {
+        double aX = std::abs((theX - myShift) / myScale);
+        return (0.5 * std::exp(-aX)) / myScale;
+    }
+
     double aX = std::abs((theX - myShift) / myScale);
     double v = myShape;
     double w = getOmega(v);
@@ -24,6 +31,10 @@ double IGLDistribution::ExpectedValue() const { return myShift; }
 
 double IGLDistribution::Variance() const
 {
+    if (std::abs(myShape) <= std::numeric_limits<double>::epsilon()) {
+        return 2.0 * myScale * myScale;
+    }
+
     double v = myShape;
     double w = getOmega(v);
 
@@ -38,6 +49,10 @@ double IGLDistribution::Asymmetry() const { return 0.0; }
 
 double IGLDistribution::Kurtosis() const
 {
+    if (std::abs(myShape) <= std::numeric_limits<double>::epsilon()) {
+        return 3.0;
+    }
+
     double v = myShape;
     double w = getOmega(v);
 

@@ -37,6 +37,8 @@ void LabTester::RunAllTests()
 
     // --- ПУНКТ 6.4 ---
     TestObserver();
+
+    TestIGLTable();
 }
 
 // ПУНКТ 6.1: сгенерировать несколько выборок разного объема и поместить в объекты
@@ -140,36 +142,79 @@ void LabTester::TestOutput(IDistribution& theDist, const string& theName, const 
 // ПУНКТ 6.4: продемонстрировать работу паттерна наблюдатель на малых выборках
 void LabTester::TestObserver()
 {
-    cout << "\n=== п. 6.4: Демонстрация Наблюдателя ===\n";
-    Empiric anEmpiric;
+    cout << "\n=== ПУНКТ 6.4: ДЕМОНСТРАЦИЯ ПАТТЕРНА НАБЛЮДАТЕЛЬ (Сгенерированные данные) ===\n";
 
-    vector<double> aStartData = { -2.31, -1.0, 0.0, 0.5, 0.8, 1.2, 1.5, 2.61, -0.2, 0.1 };
-    for (double aVal : aStartData) {
-        anEmpiric.AddData(aVal);
+    Empiric anEmpiric;
+    Normal aNormalGen(0.0, 1.0);
+
+    // Генерируем начальную выборку (10 точек) своими классами
+    for (int i = 0; i < 10; ++i) {
+        anEmpiric.AddData(aNormalGen.RandNum());
     }
 
-    // Создаем двух наблюдателей: автоматического (интерес 0) и ручного (интерес 1)
-    Histogram aHist1(anEmpiric, 3, 0, true);
-    Histogram aHist2(anEmpiric, 3, 1, true);
+    // Создаем наблюдателей
+    Histogram aHist1(anEmpiric, 3, 0, true); // Автоматический (интерес 0)
+    Histogram aHist2(anEmpiric, 3, 1, true); // Ручной (интерес 1)
 
     vector<double> aState1 = aHist1.GetDensities();
     vector<double> aState2 = aHist2.GetDensities();
 
     cout << "| " << setw(22) << left << "Гистограмма h1 (Авто)" << " | " << setw(22) << left << "Гистограмма h2 (Ручн)" << " |\n";
-    PrintState("Изначально", aHist1, aHist2);
+    PrintState("Изначальное состояние", aHist1, aHist2);
 
-    // Добавляем элемент - изменится только h1
-    double anElement = 0.0;
-    anEmpiric.AddData(anElement);
+    // Добавляем новый элемент (сгенерированный)
+    double aNewVal = aNormalGen.RandNum();
+    cout << "--> Добавляем в выборку значение: " << aNewVal << endl;
+    anEmpiric.AddData(aNewVal);
 
-    PrintState("после добавления элемента", aHist1, aHist2, aState1, aState2);
+    PrintState("После AddData (h1 обновилась*)", aHist1, aHist2, aState1, aState2);
 
     aState1 = aHist1.GetDensities();
     aState2 = aHist2.GetDensities();
 
-    // Явное уведомление подписчиков на событие 1 - обновится h2
+    // Принудительное уведомление для интереса 1
+    cout << "--> Вызываем Notify(1) для ручного обновления h2..." << endl;
     anEmpiric.Notify(1);
-    PrintState("после вызова обновления клиентом", aHist1, aHist2, aState1, aState2);
+
+    PrintState("После Notify(1) (h2 обновилась*)", aHist1, aHist2, aState1, aState2);
+}
+
+void LabTester::TestIGLTable()
+{
+    cout << "\n=== Сверка характеристик IGL с теоретической таблицей ===\n";
+
+    vector<double> aShapes = { 0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.15 };
+
+    cout << fixed << setprecision(3);
+
+    cout << setw(5) << left << "v" << " |";
+    for (double v : aShapes) {
+        cout << setw(7) << right << v << " |";
+    }
+    cout << "\n" << string(7 + 10 * 10, '-') << "\n";
+
+    cout << setw(5) << left << "s^2" << " |";
+    for (double v : aShapes) {
+        IGLDistribution aDist(0.0, 1.0, v);
+        cout << setw(7) << right << aDist.Variance() << " |";
+    }
+    cout << "\n";
+
+    cout << setw(5) << left << "g_2" << " |";
+    for (double v : aShapes) {
+        IGLDistribution aDist(0.0, 1.0, v);
+        cout << setw(7) << right << aDist.Kurtosis() << " |";
+    }
+    cout << "\n";
+
+    cout << setw(5) << left << "f_0" << " |";
+    for (double v : aShapes) {
+        IGLDistribution aDist(0.0, 1.0, v);
+        cout << setw(7) << right << aDist.Density(0.0) << " |";
+    }
+    cout << "\n";
+
+    cout << defaultfloat;
 }
 
 string LabTester::FormatBin(double theLower, double theUpper, double theDensity, bool theIsLast, bool theChanged)
