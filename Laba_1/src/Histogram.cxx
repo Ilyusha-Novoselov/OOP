@@ -1,4 +1,4 @@
-#include "Histogram.hxx"
+#include <Histogram.hxx>
 
 #include <cmath>
 

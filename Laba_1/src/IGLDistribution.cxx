@@ -1,4 +1,4 @@
-#include "IGLDistribution.hxx"
+#include <IGLDistribution.hxx>
 #include <cmath>
 #include <string>
 #include <random>
