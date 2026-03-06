@@ -40,7 +40,10 @@ double IGLDistribution::Variance() const
 
     // Формула из image_cf0e5c.png: 2 * [3v(v + w + 1) + 1] / w^4
     double aNum = 2.0 * (3.0 * v * (v + w + 1.0) + 1.0);
-    double aDen = std::pow(w, 4.0);
+
+    // Оптимизация w^4 = (3v + 1)^2 вместо std::pow(w, 4.0)
+    double w2 = 3.0 * v + 1.0;
+    double aDen = w2 * w2;
 
     return (aNum / aDen) * myScale * myScale;
 }
@@ -57,7 +60,7 @@ double IGLDistribution::Kurtosis() const
     double w = getOmega(v);
 
     // k(v) из методички
-    double kv = 10.0 * v * (21.0 * v * v * (v + w + 1.0) + 2.0 * std::pow(w, 3.0))
+    double kv = 10.0 * v * (21.0 * v * v * (v + w + 1.0) + 2.0 * w * w * w)
         + 12.0 * v * (5.0 * v * v + 9.0 * v + 1.0)
         + std::pow(3.0 * v * (v + w + 1.0) + 1.0, 2.0);
 
@@ -74,21 +77,16 @@ double IGLDistribution::RandNum()
     double w = getOmega(v);
 
     // Шаг 1: Получить u
-    std::normal_distribution<> aNorm(0.0, 1.0);
-    double a = aNorm(myEngine);
+    double a = myNorm(myEngine);
     double y = a * a;
 
-    double aTerm = std::sqrt((4.0 * std::pow(w, 3.0) * y) / v + w * w * y * y);
+    double aTerm = std::sqrt((4.0 * w * w * w * y) / v + w * w * y * y);
     double u = w + (v * y) / 2.0 - (v / (2.0 * w)) * aTerm;
 
     // Шаг 2: Получить r и z (лапласовская)
-    std::uniform_real_distribution<> anUnif(0.0, 1.0);
-    double r = anUnif(myEngine);
-
-    std::exponential_distribution<> anExp(1.0);
-    std::bernoulli_distribution aBern(0.5);
-    double e = anExp(myEngine);
-    double b = aBern(myEngine) ? 1.0 : 0.0;
+    double r = myUnif(myEngine);
+    double e = myExp(myEngine);
+    double b = myBern(myEngine) ? 1.0 : 0.0;
     double z = e * (2.0 * b - 1.0);
 
     // Шаг 3: Выбор реализации по методу суперпозиции

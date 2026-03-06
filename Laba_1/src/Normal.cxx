@@ -21,9 +21,7 @@ double Normal::Kurtosis() const { return 0.0; }
 
 double Normal::RandNum()
 {
-    std::normal_distribution<> d(0.0, 1.0);
-
-    return myShift + myScale * d(myEngine);
+    return myShift + myScale * myDist(myEngine);
 }
 
 void Normal::Save(std::ostream& theOut) const

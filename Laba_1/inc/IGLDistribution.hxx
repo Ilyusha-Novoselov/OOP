@@ -28,6 +28,11 @@ private:
     double myShift;
     double myScale;
     double myShape;
+
+    std::normal_distribution<> myNorm;
+    std::uniform_real_distribution<> myUnif;
+    std::exponential_distribution<> myExp;
+    std::bernoulli_distribution myBern;
 };
 
 #endif

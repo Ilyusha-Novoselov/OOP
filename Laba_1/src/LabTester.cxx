@@ -9,6 +9,8 @@
 #include <cmath>
 #include <fstream>
 #include <algorithm>
+#include <sstream>
+
 
 using namespace std;
 
@@ -207,11 +209,13 @@ void LabTester::TestIGLTable()
 
 string LabTester::FormatBin(double theLower, double theUpper, double theDensity, bool theIsLast, bool theChanged)
 {
-    char aBuf[64];
+    std::ostringstream oss;
     char aBracket = theIsLast ? ']' : ')';
-    snprintf(aBuf, sizeof(aBuf), "[%.2f, %.2f%c: %.2f", theLower, theUpper, aBracket, theDensity);
 
-    string aRes = aBuf;
+    oss << "[" << std::fixed << std::setprecision(2) << theLower << ", "
+        << theUpper << aBracket << ": " << theDensity;
+
+    string aRes = oss.str();
     if (theChanged) {
         aRes = "*" + aRes + "*";
     }
