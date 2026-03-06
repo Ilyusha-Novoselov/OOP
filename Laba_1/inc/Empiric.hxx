@@ -17,6 +17,9 @@ public:
 
     void AddData(double theX);
     double GetData(size_t theIndex) const;
+    void RemoveData(size_t theIndex);
+    void SetData(size_t theIndex, double theValue);
+
     size_t Size() const;
     const std::vector<double>& GetRawData() const;
 

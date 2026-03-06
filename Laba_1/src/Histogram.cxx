@@ -55,3 +55,19 @@ int Histogram::GetBinsCount() const { return myK; }
 double Histogram::GetBound(int theIndex) const { return myBounds[theIndex]; }
 
 double Histogram::GetDensity(int theIndex) const { return myEmpDensity[theIndex]; }
+
+double Histogram::GetDensityByValue(double theX) const
+{
+    if (myK == 0 || myBounds.empty()) return 0.0;
+
+    // Если точка выходит за границы гистограммы, плотность 0
+    if (theX < myBounds.front() || theX > myBounds.back()) return 0.0;
+
+    // Ищем, в какой интервал попадает X
+    for (int i = 0; i < myK; ++i) {
+        if (theX >= myBounds[i] && theX <= myBounds[i + 1]) {
+            return myEmpDensity[i];
+        }
+    }
+    return 0.0;
+}

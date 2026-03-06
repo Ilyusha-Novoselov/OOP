@@ -21,6 +21,7 @@ public:
     int GetBinsCount() const;
     double GetBound(int theIndex) const;
     double GetDensity(int theIndex) const;
+    double GetDensityByValue(double theX) const;
 
     // Метод для получения "слепка" текущих данных
     std::vector<double> GetDensities() const { return myEmpDensity; }

@@ -35,6 +35,22 @@ void Empiric::AddData(double theX)
 
 double Empiric::GetData(size_t theIndex) const { return myData.at(theIndex); }
 
+void Empiric::RemoveData(size_t theIndex)
+{
+    if (theIndex < myData.size()) {
+        myData.erase(myData.begin() + theIndex);
+        Notify(0);
+    }
+}
+
+void Empiric::SetData(size_t theIndex, double theValue)
+{
+    if (theIndex < myData.size()) {
+        myData[theIndex] = theValue;
+        Notify(0);
+    }
+}
+
 size_t Empiric::Size() const { return myData.size(); }
 
 const std::vector<double>& Empiric::GetRawData() const { return myData; }
@@ -92,7 +108,9 @@ double Empiric::Asymmetry() const
     double aVar = Variance();
 
     // «ащита от делени€ на ноль, если все числа одинаковые
-    if (std::abs(aVar) < 1e-9) return 0.0;
+    if (std::abs(aVar) < 1e-9) {
+        return 0.0;
+    }
 
     double aSum = 0.0;
     for (double x : myData) {
@@ -114,7 +132,9 @@ double Empiric::Kurtosis() const
     double aMean = Mean();
     double aVar = Variance();
 
-    if (std::abs(aVar) < 1e-9) return 0.0;
+    if (std::abs(aVar) < 1e-9) {
+        return 0.0;
+    }
 
     double aSum = 0.0;
     for (double x : myData) {

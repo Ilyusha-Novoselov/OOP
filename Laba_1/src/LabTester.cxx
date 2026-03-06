@@ -115,17 +115,8 @@ void LabTester::TestOutput(IDistribution& theDist, const string& theName, const 
 
             // ЌјЅќ– 2: Ёћѕ»–»„≈— јя ѕЋќ“Ќќ—“№
             // x = сгенерированна€ точка, y = плотность корзины, в которую она попала
-            // »менно этот цикл сформирует плотное "облако" точек в виде ступенек
             for (double aVal : aRawData) {
-                double anEmpDens = 0.0;
-
-                // »щем, в какой столбец гистограммы попала точка
-                for (int i = 0; i < aHist.GetBinsCount(); ++i) {
-                    if (aVal >= aHist.GetBound(i) && aVal <= aHist.GetBound(i + 1)) {
-                        anEmpDens = aHist.GetDensity(i);
-                        break;
-                    }
-                }
+                double anEmpDens = aHist.GetDensityByValue(aVal);
 
                 anOut << aVal << " " << anEmpDens << "\n";
             }
