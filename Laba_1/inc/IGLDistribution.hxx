@@ -11,7 +11,7 @@ public:
     IGLDistribution(double theShift = 0.0, double theScale = 1.0, double theShape = 2.0) :
         myShift(theShift),
         myScale(theScale > 0 ? theScale : 1.0),
-        myShape(myShape > 0 ? myShape : 1.0)
+        myShape(theShape > 0 ? theShape : 1.0)
     {};
 
     double Density(double x) const override;

@@ -436,7 +436,7 @@ Window {
                         RowLayout {
                             spacing: 8
                             Label { text: "v:"; color: "#A0AAB5"; font.pixelSize: 16; font.italic: true }
-                            StyledTextField { id: vInput; text: "0.5" }
+                            StyledTextField { id: vInput; text: "2" }
                         }
 
                         RowLayout {

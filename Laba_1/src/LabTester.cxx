@@ -93,7 +93,7 @@ void LabTester::TestOutput(IDistribution& theDist, const string& theName, const 
         }
 
         // Формула Стерджеса для количества столбцов гистограммы
-        int aBins = std::ceil(1.0 + 3.322 * std::log10(anEmpiric.Size()));
+        int aBins = static_cast<int>(std::log2(anEmpiric.Size())) + 1;
         Histogram aHist(anEmpiric, aBins);
 
         string aFileName = theName + "_" + std::to_string(aSize) + ".txt";
