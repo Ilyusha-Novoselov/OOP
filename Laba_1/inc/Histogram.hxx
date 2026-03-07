@@ -1,10 +1,11 @@
 #ifndef _Laba1_Histogram_Header
 #define _Laba1_Histogram_Header
 
-#include "IObserver.hxx"
-#include "Empiric.hxx"
+#include <IObserver.hxx>
+#include <Empiric.hxx>
 
 #include <vector>
+
 
 class Histogram : public IObserver
 {

@@ -1,8 +1,10 @@
 #include <IGLDistribution.hxx>
+
 #include <cmath>
 #include <string>
 #include <random>
 #include <limits>
+
 
 // Вспомогательная функция для расчета omega из методички
 static double getOmega(double v) {

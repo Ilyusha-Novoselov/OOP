@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+
 Histogram::Histogram(Empiric& theEmpiric, int theBins, int theInterest, bool theFixed)
     : myRef(theEmpiric), myK(theBins), myInterest(theInterest), myIsFixedBounds(theFixed)
 {

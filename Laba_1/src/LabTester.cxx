@@ -1,8 +1,9 @@
-#include "LabTester.hxx"
-#include "Empiric.hxx"
-#include "Normal.hxx"
-#include "Uniform.hxx"
-#include "IGLDistribution.hxx"
+#include <LabTester.hxx>
+
+#include <Empiric.hxx>
+#include <Normal.hxx>
+#include <Uniform.hxx>
+#include <IGLDistribution.hxx>
 
 #include <iostream>
 #include <iomanip>
