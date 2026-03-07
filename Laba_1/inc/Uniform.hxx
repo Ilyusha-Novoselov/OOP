@@ -26,6 +26,8 @@ public:
 private:
     double myShift;
     double myScale;
+
+    std::uniform_real_distribution<> myDist;
 };
 
 #endif
