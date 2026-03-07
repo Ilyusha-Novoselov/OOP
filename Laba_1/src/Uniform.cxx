@@ -24,7 +24,9 @@ double Uniform::Kurtosis() const { return -1.2; }
 
 double Uniform::RandNum()
 {
-    return myShift + myScale * myDist(myEngine);
+    std::uniform_real_distribution<> aDist(-1.0, 1.0);
+
+    return myShift + myScale * aDist(myEngine);
 }
 
 void Uniform::Save(std::ostream& theOut) const
