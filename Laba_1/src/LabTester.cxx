@@ -11,6 +11,8 @@
 #include <fstream>
 #include <algorithm>
 #include <sstream>
+#include <vector>
+#include <utility>
 
 
 using namespace std;
@@ -19,24 +21,82 @@ void LabTester::RunAllTests()
 {
     std::setlocale(LC_ALL, "");
 
-    // Базовые распределения
-    Normal aNormDist(0.0, 1.0);
-    Uniform anUnifDist(0.0, 1.0);
-    IGLDistribution anIGLDist(0.0, 1.0, 2.0); // Вариант 3
-
     // Размеры выборок для тестов
     vector<int> aStatSizes = { 100, 10000, 1000000 };
     vector<int> anOutputSizes = { 100, 1000 };
 
-    // --- ПУНКТЫ 6.1 и 6.2 ---
-    TestStats(aNormDist, "Normal", aStatSizes);
-    TestStats(anUnifDist, "Uniform", aStatSizes);
-    TestStats(anIGLDist, "IG_L", aStatSizes);
+    // --- ПЕРЕБОР ПАРАМЕТРОВ ДЛЯ NORMAL ---
+    cout << "\n==================================================";
+    cout << "\n   ТЕСТИРОВАНИЕ НОРМАЛЬНОГО РАСПРЕДЕЛЕНИЯ (Normal)";
+    cout << "\n==================================================";
+    // Параметры: {Shift, Scale}
+    vector<pair<double, double>> aNormParams = {
+        {0.0, 1.0},    // Стандартное нормальное распределение N(0, 1). Классический тест.
+        {5.0, 0.1},    // Узкое распределение (острый пик). Краевой случай на малый разброс.
+        {-20.0, 10.0}, // Широкое распределение (колокол сильно размазан), уходящее в отрицательную область.
+        {100.0, 2.0}   // Сильное смещение далеко вправо при небольшом отклонении.
+    };
 
-    // --- ПУНКТ 6.3 ---
-    TestOutput(aNormDist, "Normal", anOutputSizes);
-    TestOutput(anUnifDist, "Uniform", anOutputSizes);
-    TestOutput(anIGLDist, "IG_L", anOutputSizes);
+    for (const auto& p : aNormParams) {
+        Normal aNormDist(p.first, p.second);
+
+        ostringstream oss;
+        oss << "Normal_sh" << p.first << "_sc" << p.second;
+        string aName = oss.str();
+
+        cout << "\n\n>>> Значения параметров: Shift = " << p.first << ", Scale = " << p.second << " <<<";
+        TestStats(aNormDist, aName, aStatSizes);
+        TestOutput(aNormDist, aName, anOutputSizes);
+    }
+
+    // --- ПЕРЕБОР ПАРАМЕТРОВ ДЛЯ UNIFORM ---
+    cout << "\n\n==================================================";
+    cout << "\n ТЕСТИРОВАНИЕ РАВНОМЕРНОГО РАСПРЕДЕЛЕНИЯ (Uniform)";
+    cout << "\n==================================================";
+    // Параметры: {Shift, Scale}
+    vector<pair<double, double>> anUnifParams = {
+        {0.0, 1.0},    // Отрезок [-1, 1]. Базовый случай.
+        {0.5, 0.5},    // Отрезок [0, 1]. Классический стандартный ГСЧ.
+        {10.0, 0.05},  // Отрезок [9.95, 10.05]. Очень узкий интервал, проверка на чувствительность шага гистограммы.
+        {-50.0, 25.0}  // Отрезок [-75, -25]. Широкий разброс строго в отрицательных числах.
+    };
+
+    for (const auto& p : anUnifParams) {
+        Uniform anUnifDist(p.first, p.second);
+
+        ostringstream oss;
+        oss << "Uniform_sh" << p.first << "_sc" << p.second;
+        string aName = oss.str();
+
+        cout << "\n\n>>> Значения параметров: Shift = " << p.first << ", Scale = " << p.second << " <<<";
+        TestStats(anUnifDist, aName, aStatSizes);
+        TestOutput(anUnifDist, aName, anOutputSizes);
+    }
+
+    // --- ПЕРЕБОР ПАРАМЕТРОВ ДЛЯ IGLDistribution ---
+    cout << "\n\n==================================================";
+    cout << "\n       ТЕСТИРОВАНИЕ РАСПРЕДЕЛЕНИЯ IG_L (Вариант 3)";
+    cout << "\n==================================================";
+    struct IGLParams { double shift, scale, shape; };
+    // Параметры: {Shift, Scale, Shape}
+    vector<IGLParams> anIGLParams = {
+        {0.0, 1.0, 2.0},   // Базовый случай по варианту.
+        {0.0, 1.0, 0.0},   // КРАЕВОЙ СЛУЧАЙ: Shape = 0 (вырождается в распределение Лапласа, отрабатывает отдельный if в коде).
+        {-5.0, 2.0, 0.1},  // Малое ненулевое значение формы (Shape = 0.1), проверка перехода от Лапласа к IG_L.
+        {10.0, 0.5, 5.0}   // Большое значение параметра формы, узкий масштаб. Специфический вид пика.
+    };
+
+    for (const auto& p : anIGLParams) {
+        IGLDistribution anIGLDist(p.shift, p.scale, p.shape);
+
+        ostringstream oss;
+        oss << "IG_L_sh" << p.shift << "_sc" << p.scale << "_shape" << p.shape;
+        string aName = oss.str();
+
+        cout << "\n\n>>> Значения параметров: Shift = " << p.shift << ", Scale = " << p.scale << ", Shape = " << p.shape << " <<<";
+        TestStats(anIGLDist, aName, aStatSizes);
+        TestOutput(anIGLDist, aName, anOutputSizes);
+    }
 
     // --- ПУНКТ 6.4 ---
     TestObserver();

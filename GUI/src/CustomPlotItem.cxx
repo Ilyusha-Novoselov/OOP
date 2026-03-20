@@ -155,16 +155,18 @@ void CustomPlotItem::loadData(const QString& fileUrl, const QColor& color)
     }
 }
 
-void CustomPlotItem::plotCustomFunction(const QString& formula, double v, double a, double b, double mu, double sigma, const QColor& color, double xMin, double xMax, int stepCount)
+void CustomPlotItem::plotCustomFunction(const QString& formula, double shift, double scale, double shape, const QColor& color, double xMin, double xMax, int stepCount)
 {
     if (stepCount <= 1 || formula.trimmed().isEmpty()) return;
 
     QJSEngine engine;
 
+    // ОБНОВЛЕНО: Подготавливаем переменные z и w заранее для удобства написания формул
     QString jsCode = QString(
-        "(function(x, v, a, b, mu, sigma) { "
+        "(function(x, shift, scale, shape) { "
         "  with(Math) { "
-        "    var w = sqrt(3*v + 1); "
+        "    var z = abs((x - shift) / scale); "
+        "    var w = sqrt(3 * shape + 1); "
         "    return %1; "
         "  } "
         "})"
@@ -183,7 +185,7 @@ void CustomPlotItem::plotCustomFunction(const QString& formula, double v, double
     for (int i = 0; i < stepCount; ++i) {
         double currentX = xMin + i * step;
         QJSValueList args;
-        args << currentX << v << a << b << mu << sigma;
+        args << currentX << shift << scale << shape;
 
         double currentY = jsFunc.call(args).toNumber();
 

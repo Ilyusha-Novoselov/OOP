@@ -75,6 +75,14 @@ double IGLDistribution::Kurtosis() const
 
 double IGLDistribution::RandNum()
 {
+    // Обработка краевого случая: если shape == 0, генерируем величину Лапласа
+    if (std::abs(myShape) <= std::numeric_limits<double>::epsilon()) {
+        double e = myExp(myEngine);
+        double b = myBern(myEngine) ? 1.0 : 0.0;
+        double z = e * (2.0 * b - 1.0);
+        return myShift + myScale * z;
+    }
+
     double v = myShape;
     double w = getOmega(v);
 

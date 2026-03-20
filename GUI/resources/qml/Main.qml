@@ -268,9 +268,12 @@ Window {
                             
                             model: ListModel {
                                 id: formulaModel
-                                ListElement { text: "(w / (2 * sqrt(1 + 2*v*abs(x)))) * exp((w/v) * (1 - sqrt(1 + 2*v*abs(x))))" }
-                                ListElement { text: "(x > a && x <= b) ? (1 / (b - a)) : NaN" }
-                                ListElement { text: "(1 / (sigma * sqrt(2 * PI))) * exp(-pow(x - mu, 2) / (2 * pow(sigma, 2)))" }
+                                // 1. Формула для IG-L: использует z и w из C++, а также делит итоговое значение на scale
+                                ListElement { text: "(abs(shape) < 1e-9) ? (0.5 * exp(-z) / scale) : ((w / (2 * sqrt(1 + 2*shape*z))) * exp((w/shape) * (1 - sqrt(1 + 2*shape*z))) / scale)" }
+                                // 2. Равномерное: использует shift как центр отрезка, scale - как полуширину
+                                ListElement { text: "(x >= (shift - scale) && x <= (shift + scale)) ? (1 / (2 * scale)) : 0.0" }
+                                // 3. Нормальное: shift - мат. ожидание, scale - среднекв. отклонение
+                                ListElement { text: "(1 / (scale * sqrt(2 * PI))) * exp(-pow(x - shift, 2) / (2 * scale * scale))" }
                             }
                             textRole: "text"
 
@@ -368,18 +371,16 @@ Window {
                             }
                             contentItem: Text { text: parent.text; color: "white"; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter; font.pixelSize: 16; font.bold: true }
                             onClicked: {
-                                let vVal = parseFloat(vInput.text.replace(',', '.'));
-                                let aVal = parseFloat(aInput.text.replace(',', '.'));
-                                let bVal = parseFloat(bInput.text.replace(',', '.'));
-                                let muVal = parseFloat(muInput.text.replace(',', '.'));
-                                let sigmaVal = parseFloat(sigmaInput.text.replace(',', '.'));
-                                
-                                // Считываем заданные границы отрисовки
+                                // ОБНОВЛЕНО: Считываем унифицированные параметры
+                                let shiftVal = parseFloat(shiftInput.text.replace(',', '.'));
+                                let scaleVal = parseFloat(scaleInput.text.replace(',', '.'));
+                                let shapeVal = parseFloat(shapeInput.text.replace(',', '.'));
+
                                 let xMinVal = parseFloat(xMinInput.text.replace(',', '.'));
                                 let xMaxVal = parseFloat(xMaxInput.text.replace(',', '.'));
-                                if (isNaN(xMinVal)) xMinVal = -5.0; // Защита от пустого ввода
+                                if (isNaN(xMinVal)) xMinVal = -5.0;
                                 if (isNaN(xMaxVal)) xMaxVal = 5.0;
-                                
+
                                 let currentFormula = formulaInput.editText.trim(); 
                                 let selectedColor = colorModel.get(colorSelector.currentIndex).code;
                                 
@@ -391,8 +392,7 @@ Window {
                                     }
                                     formulaInput.currentIndex = foundIndex;
                                     
-                                    // Передаем границы отрисовки xMinVal и xMaxVal в C++
-                                    plotItem.plotCustomFunction(currentFormula, vVal, aVal, bVal, muVal, sigmaVal, selectedColor, xMinVal, xMaxVal);
+                                    plotItem.plotCustomFunction(currentFormula, shiftVal, scaleVal, shapeVal, selectedColor, xMinVal, xMaxVal);
                                 }
                             }
                         }
@@ -430,37 +430,25 @@ Window {
                             StyledTextField { id: xMaxInput; text: "5.0" }
                         }
                         
-                        // Разделитель
                         Rectangle { width: 1; height: 25; color: "#40FFFFFF"; radius: 1; Layout.leftMargin: 5; Layout.rightMargin: 5 }
 
+                        // ОБНОВЛЕНО: Три унифицированных поля ввода параметров
                         RowLayout {
                             spacing: 8
-                            Label { text: "v:"; color: "#A0AAB5"; font.pixelSize: 16; font.italic: true }
-                            StyledTextField { id: vInput; text: "2" }
+                            Label { text: "Shift:"; color: "#A0AAB5"; font.pixelSize: 16; font.italic: true }
+                            StyledTextField { id: shiftInput; text: "0.0" }
                         }
 
                         RowLayout {
                             spacing: 8
-                            Label { text: "a:"; color: "#A0AAB5"; font.pixelSize: 16; font.italic: true }
-                            StyledTextField { id: aInput; text: "-1.0" }
+                            Label { text: "Scale:"; color: "#A0AAB5"; font.pixelSize: 16; font.italic: true }
+                            StyledTextField { id: scaleInput; text: "1.0" }
                         }
 
                         RowLayout {
                             spacing: 8
-                            Label { text: "b:"; color: "#A0AAB5"; font.pixelSize: 16; font.italic: true }
-                            StyledTextField { id: bInput; text: "1.0" }
-                        }
-
-                        RowLayout {
-                            spacing: 8
-                            Label { text: "μ:"; color: "#A0AAB5"; font.pixelSize: 16; font.italic: true }
-                            StyledTextField { id: muInput; text: "0.0" }
-                        }
-
-                        RowLayout {
-                            spacing: 8
-                            Label { text: "σ:"; color: "#A0AAB5"; font.pixelSize: 16; font.italic: true }
-                            StyledTextField { id: sigmaInput; text: "1.0" }
+                            Label { text: "Shape:"; color: "#A0AAB5"; font.pixelSize: 16; font.italic: true }
+                            StyledTextField { id: shapeInput; text: "2.0" }
                         }
                         
                         Item { Layout.fillWidth: true } // Spacer
