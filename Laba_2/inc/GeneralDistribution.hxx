@@ -30,6 +30,7 @@ public:
     void Load(std::istream& theIn) override;
 
     IDistribution& Component();
+    const IDistribution& Component() const;
 
 private:
     IDistribution* myLetter;

@@ -78,3 +78,8 @@ IDistribution& GeneralDistribution::Component()
 {
     return *myLetter;
 }
+
+const IDistribution& GeneralDistribution::Component() const
+{
+    return *myLetter;
+}

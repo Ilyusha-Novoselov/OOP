@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <stdexcept>
 
 void LabTester::RunAllTests()
 {
@@ -20,13 +21,21 @@ void LabTester::RunAllTests()
 void LabTester::TestVirtualConstructors()
 {
     std::cout << "\n=== Тест 1: Виртуальные конструкторы (Clone и Name) ===\n";
-    Normal aNorm(5.0, 2.0);
-    IDistribution* aClonedNorm = aNorm.Clone();
 
-    std::cout << "Оригинал Normal: name = " << aNorm.Name() << ", E(X)=" << aNorm.ExpectedValue() << "\n";
-    std::cout << "Клон Normal:     name = " << aClonedNorm->Name() << ", E(X)=" << aClonedNorm->ExpectedValue() << "\n";
+    std::vector<IDistribution*> anOrigs;
+    anOrigs.push_back(new Normal(5.0, 2.0));
+    anOrigs.push_back(new Uniform(1.0, 10.0));
+    anOrigs.push_back(new IGLDistribution(0.0, 1.0, 2.0));
 
-    delete aClonedNorm;
+    for (auto* anOrig : anOrigs) {
+        IDistribution* aClone = anOrig->Clone();
+        std::cout << "Оригинал: name = " << anOrig->Name() << "\t| E(X) = " << anOrig->ExpectedValue() << "\n";
+        std::cout << "Клон:     name = " << aClone->Name() << "\t| E(X) = " << aClone->ExpectedValue() << "\n";
+        std::cout << "---------------------------------------------------\n";
+
+        delete aClone;
+        delete anOrig;
+    }
 }
 
 void LabTester::TestFactoryPattern()
@@ -34,30 +43,45 @@ void LabTester::TestFactoryPattern()
     std::cout << "\n=== Тест 2: Паттерн Фабрика (Factory Method) ===\n";
     auto& aFactory = DistributionFactory::Instance();
 
-    IDistribution* aD1 = aFactory.CreateDistribution("Normal");
-    IDistribution* aD2 = aFactory.CreateDistribution("Uniform");
-    IDistribution* aD3 = aFactory.CreateDistribution("IG_L");
+    std::vector<std::string> aNames = { "Normal", "Uniform", "IG_L" };
+    for (const auto& aName : aNames) {
+        IDistribution* aDist = aFactory.CreateDistribution(aName);
+        std::cout << "Успешно создано через фабрику: " << aDist->Name() << "\n";
+        delete aDist;
+    }
 
-    std::cout << "Создано через фабрику: " << aD1->Name() << "\n";
-    std::cout << "Создано через фабрику: " << aD2->Name() << "\n";
-    std::cout << "Создано через фабрику: " << aD3->Name() << "\n";
-
-    delete aD1; delete aD2; delete aD3;
+    // Проверка на несуществующий класс (защита от "дурака")
+    std::cout << "Проверка обработки ошибок:\n";
+    try {
+        IDistribution* aFail = aFactory.CreateDistribution("UnknownDistribution");
+    }
+    catch (const std::exception& e) {
+        std::cout << " -> Ожидаемое исключение поймано: " << e.what() << "\n";
+    }
 }
 
 void LabTester::TestEnvelopeIdiom()
 {
     std::cout << "\n=== Тест 3: Идиома Конверт/Письмо (GeneralDistribution) ===\n";
+
     Normal aNorm(10.0, 3.0);
     GeneralDistribution aGen1(aNorm);
+    std::cout << "1. Базовая обертка создана. Внутренний класс: " << aGen1.Component().Name() << "\n";
 
-    std::cout << "GeneralDistribution оборачивает " << aGen1.Component().Name()
-        << ", E(X)=" << aGen1.ExpectedValue() << "\n";
-
-    // Проверка эффекта матрешки
+    // Проверка конструктора копирования
     GeneralDistribution aGen2(aGen1);
-    std::cout << "GeneralDistribution оборачивает GeneralDistribution. Внутренний тип: "
-        << aGen2.Component().Name() << " (если не GeneralDistribution, то матрешки нет)\n";
+    std::cout << "2. Копия обертки создана. Внутренний класс: " << aGen2.Component().Name() << "\n";
+
+    // Проверка оператора присваивания
+    GeneralDistribution aGen3(Uniform(0.0, 1.0));
+    aGen3 = aGen1;
+    std::cout << "3. После присваивания обертка содержит: " << aGen3.Component().Name() << "\n";
+
+    // Проверка защиты от эффекта матрешки
+    GeneralDistribution aMatryoshka(aGen1);
+    std::cout << "4. Проверка 'матрешки' (передача конверта в конверт).\n"
+        << "   Внутренний тип: " << aMatryoshka.Component().Name()
+        << " (Если Normal, то защиты сработала верно, матрешки нет!)\n";
 }
 
 void LabTester::TestPolymorphicPersistence()
@@ -67,16 +91,22 @@ void LabTester::TestPolymorphicPersistence()
     std::vector<GeneralDistribution> aSaveDists;
     aSaveDists.push_back(GeneralDistribution(Normal(10.0, 3.0)));
     aSaveDists.push_back(GeneralDistribution(Uniform(5.0, 2.0)));
+    aSaveDists.push_back(GeneralDistribution(IGLDistribution(0.0, 1.0, 2.0)));
 
+    std::cout << "--- Сохранение объектов ---\n";
     std::ofstream anOut("test_distributions.txt");
     if (anOut.is_open()) {
         for (const auto& aDist : aSaveDists) {
+            std::cout << "Сохранение: " << aDist.Component().Name()
+                << "\t| E(X) = " << aDist.ExpectedValue()
+                << "\t| Var = " << aDist.Variance() << "\n";
             aDist.Save(anOut);
         }
         anOut.close();
-        std::cout << "Сохранено 2 объекта в файл.\n";
+        std::cout << "Данные успешно записаны в test_distributions.txt.\n";
     }
 
+    std::cout << "\n--- Восстановление объектов через фабрику ---\n";
     std::vector<GeneralDistribution> aLoadDists;
     std::ifstream anIn("test_distributions.txt");
     if (anIn.is_open()) {
@@ -92,7 +122,8 @@ void LabTester::TestPolymorphicPersistence()
     }
 
     for (size_t i = 0; i < aLoadDists.size(); ++i) {
-        std::cout << "Загружен объект " << i + 1 << ": name = " << aLoadDists[i].Component().Name()
-            << ", E(X)=" << aLoadDists[i].ExpectedValue() << "\n";
+        std::cout << "Загрузка:   " << aLoadDists[i].Component().Name()
+            << "\t| E(X) = " << aLoadDists[i].ExpectedValue()
+            << "\t| Var = " << aLoadDists[i].Variance() << "\n";
     }
 }
