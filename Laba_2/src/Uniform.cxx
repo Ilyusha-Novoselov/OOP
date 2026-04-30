@@ -40,3 +40,7 @@ void Uniform::Load(std::istream& theIn)
 
     theIn >> aName >> myShift >> myScale;
 }
+
+IDistribution* Uniform::Clone() const { return new Uniform(*this); }
+
+std::string Uniform::Name() const { return "Uniform"; }

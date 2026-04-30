@@ -86,6 +86,14 @@ void CustomPlotItem::clearPlot()
     m_customPlot->replot();
 }
 
+double CustomPlotItem::besselK(double v, double x) const {
+    return std::cyl_bessel_k(v, x);
+}
+
+double CustomPlotItem::tgamma(double x) const {
+    return std::tgamma(x);
+}
+
 void CustomPlotItem::loadData(const QString& fileUrl, const QColor& color)
 {
     QString filePath = QUrl(fileUrl).toLocalFile();
@@ -161,7 +169,10 @@ void CustomPlotItem::plotCustomFunction(const QString& formula, double shift, do
 
     QJSEngine engine;
 
-    // ОБНОВЛЕНО: Подготавливаем переменные z и w заранее для удобства написания формул
+    // РЕГИСТРАЦИЯ: делаем этот объект доступным в JS под именем mathExt
+    QJSValue mathExt = engine.newQObject(this);
+    engine.globalObject().setProperty("mathExt", mathExt);
+
     QString jsCode = QString(
         "(function(x, shift, scale, shape) { "
         "  with(Math) { "

@@ -266,14 +266,18 @@ Window {
                             font.pixelSize: 16
                             rightPadding: 40
                             
+                            // ... внутри ComboBox { id: formulaInput ...
                             model: ListModel {
                                 id: formulaModel
-                                // 1. Формула для IG-L: использует z и w из C++, а также делит итоговое значение на scale
+                                // Существующие элементы...
                                 ListElement { text: "(abs(shape) < 1e-9) ? (0.5 * exp(-z) / scale) : ((w / (2 * sqrt(1 + 2*shape*z))) * exp((w/shape) * (1 - sqrt(1 + 2*shape*z))) / scale)" }
-                                // 2. Равномерное: использует shift как центр отрезка, scale - как полуширину
                                 ListElement { text: "(x >= (shift - scale) && x <= (shift + scale)) ? (1 / (2 * scale)) : 0.0" }
-                                // 3. Нормальное: shift - мат. ожидание, scale - среднекв. отклонение
                                 ListElement { text: "(1 / (scale * sqrt(2 * PI))) * exp(-pow(x - shift, 2) / (2 * scale * scale))" }
+
+                                // НОВАЯ ФОРМУЛА: Симметричное расширенное обобщенное гиперболическое (SEGH)
+                                ListElement { 
+                                    text: "(1 / (2 * mathExt.tgamma(4/3) * mathExt.besselK(0.5, shape))) * pow(sqrt(1 + 2*pow(z, 3)/shape), -5/6) * mathExt.besselK(5/6, shape * sqrt(1 + 2*pow(z, 3)/shape)) / scale" 
+                                }
                             }
                             textRole: "text"
 

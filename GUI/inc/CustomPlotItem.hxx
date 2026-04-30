@@ -18,11 +18,13 @@ public:
 
     Q_INVOKABLE void loadData(const QString& fileUrl, const QColor& color);
 
-    // ОБНОВЛЕНО: Используем универсальные параметры shift, scale, shape
     Q_INVOKABLE void plotCustomFunction(const QString& formula, double shift, double scale, double shape, const QColor& color, double xMin = -5.0, double xMax = 5.0, int stepCount = 500);
 
     Q_INVOKABLE void resetScale();
     Q_INVOKABLE void clearPlot();
+
+    Q_INVOKABLE double besselK(double v, double x) const;
+    Q_INVOKABLE double tgamma(double x) const;
 
 protected:
     void geometryChange(const QRectF& newGeometry, const QRectF& oldGeometry) override;

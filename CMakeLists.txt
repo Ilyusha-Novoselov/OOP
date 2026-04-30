@@ -8,3 +8,4 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 add_subdirectory(GUI)
 add_subdirectory(Laba_1)
+add_subdirectory(Laba_2)
