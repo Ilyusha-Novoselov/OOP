@@ -1,22 +1,29 @@
 #include <DistributionFactory.hxx>
+
 #include <stdexcept>
 
-DistributionFactory& DistributionFactory::Instance()
+
+DistributionFactory & DistributionFactory::Instance()
 {
     static DistributionFactory anInstance;
     return anInstance;
 }
 
-void DistributionFactory::RegisterDistribution(const std::string& theName, Creator theCreator)
+bool DistributionFactory::RegisterDistribution(const std::string& theName, CreatorCallback theCreator)
 {
-    myCreators[theName] = theCreator;
+    return myCallbacks.insert({ theName, theCreator }).second;
+}
+
+bool DistributionFactory::UnregisterDistribution(const std::string& theName)
+{
+    return myCallbacks.erase(theName) > 0;
 }
 
 IDistribution* DistributionFactory::CreateDistribution(const std::string& theName)
 {
-    auto anIt = myCreators.find(theName);
-    if (anIt != myCreators.end()) {
-        return anIt->second();
+    auto anIter = myCallbacks.find(theName);
+    if (anIter == myCallbacks.end()) {
+        throw std::runtime_error("Unknown distribution type: " + theName);
     }
-    throw std::runtime_error("DistributionFactory: Unregistered class name -> " + theName);
+    return anIter->second();
 }

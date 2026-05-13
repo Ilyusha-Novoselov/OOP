@@ -1,4 +1,5 @@
 #include <IGLDistribution.hxx>
+#include <DistributionFactory.hxx>
 
 #include <cmath>
 #include <string>
@@ -124,3 +125,9 @@ void IGLDistribution::Load(std::istream& theIn)
 IDistribution* IGLDistribution::Clone() const { return new IGLDistribution(*this); }
 
 std::string IGLDistribution::Name() const { return "IG_L"; }
+
+// Саморегистрация типа в фабрике
+namespace {
+IDistribution* CreateIGL() { return new IGLDistribution(); }
+const bool anIsRegisteredIGL = DistributionFactory::Instance().RegisterDistribution("IG_L", CreateIGL);
+}

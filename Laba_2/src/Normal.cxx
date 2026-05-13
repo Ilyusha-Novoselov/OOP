@@ -1,4 +1,5 @@
 #include <Normal.hxx>
+#include <DistributionFactory.hxx>
 
 #include <cmath>
 #include <string>
@@ -39,3 +40,9 @@ void Normal::Load(std::istream& theIn)
 IDistribution* Normal::Clone() const { return new Normal(*this); }
 
 std::string Normal::Name() const { return "Normal"; }
+
+// Саморегистрация типа в фабрике
+namespace {
+IDistribution* CreateNormal() { return new Normal(); }
+const bool anIsRegisteredNormal = DistributionFactory::Instance().RegisterDistribution("Normal", CreateNormal);
+}

@@ -3,29 +3,31 @@
 
 #include <IDistribution.hxx>
 
-#include <unordered_map>
-#include <string>
 #include <functional>
+#include <string>
+#include <unordered_map>
 
-// ПУНКТ 2.2: Фабрика-синглтон для создания объектов
+
 class DistributionFactory
 {
 public:
-    using Creator = std::function<IDistribution*()>;
+    using CreatorCallback = std::function<IDistribution* ()>;
 
     static DistributionFactory& Instance();
 
-    void RegisterDistribution(const std::string& theName, Creator theCreator);
-    IDistribution* CreateDistribution(const std::string& theName);
-
+    // Запрет копирования и перемещения синглтона
     DistributionFactory(const DistributionFactory&) = delete;
     DistributionFactory& operator=(const DistributionFactory&) = delete;
+
+    bool RegisterDistribution(const std::string& theName, CreatorCallback theCreator);
+    bool UnregisterDistribution(const std::string& theName);
+    IDistribution* CreateDistribution(const std::string& theName);
 
 private:
     DistributionFactory() = default;
     ~DistributionFactory() = default;
 
-    std::unordered_map<std::string, Creator> myCreators;
+    std::unordered_map<std::string, CreatorCallback> myCallbacks;
 };
 
 #endif

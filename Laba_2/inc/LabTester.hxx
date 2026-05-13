@@ -7,10 +7,11 @@ public:
     void RunAllTests();
 
 private:
+    void TestSingletonAndFactory();
     void TestVirtualConstructors();
-    void TestFactoryPattern();
-    void TestEnvelopeIdiom();
+    void TestMathAndDelegation();
     void TestPolymorphicPersistence();
+    void TestMatryoshkaEffect();
 };
 
 #endif

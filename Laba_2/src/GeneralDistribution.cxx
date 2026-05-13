@@ -1,24 +1,27 @@
 #include <GeneralDistribution.hxx>
 #include <DistributionFactory.hxx>
+
 #include <typeinfo>
 
-GeneralDistribution::GeneralDistribution(std::istream& theIn) : myLetter(nullptr)
+
+GeneralDistribution::GeneralDistribution(std::istream & theIn) : myLetter(nullptr)
 {
     Load(theIn);
 }
 
-GeneralDistribution::GeneralDistribution(const GeneralDistribution& theD0)
+GeneralDistribution::GeneralDistribution(const GeneralDistribution& theOther)
 {
-    myLetter = theD0.myLetter->Clone();
+    myLetter = theOther.myLetter->Clone();
 }
 
-GeneralDistribution::GeneralDistribution(const IDistribution& theD0)
+GeneralDistribution::GeneralDistribution(const IDistribution& theOther)
 {
-    // Защита от эффекта "матрешки" по методическим указаниям
-    if (typeid(theD0) == typeid(const GeneralDistribution)) {
-        myLetter = dynamic_cast<const GeneralDistribution&>(theD0).myLetter->Clone();
-    } else {
-        myLetter = theD0.Clone();
+    // Защита от эффекта матрешки
+    if (typeid(theOther) == typeid(const GeneralDistribution)) {
+        myLetter = dynamic_cast<const GeneralDistribution&>(theOther).myLetter->Clone();
+    }
+    else {
+        myLetter = theOther.Clone();
     }
 }
 
@@ -27,23 +30,13 @@ GeneralDistribution::~GeneralDistribution()
     delete myLetter;
 }
 
-GeneralDistribution& GeneralDistribution::operator=(const GeneralDistribution& theD0)
+GeneralDistribution& GeneralDistribution::operator=(const GeneralDistribution& theOther)
 {
-    if (this != &theD0) {
+    if (this != &theOther) {
         delete myLetter;
-        myLetter = theD0.myLetter->Clone();
+        myLetter = theOther.myLetter->Clone();
     }
     return *this;
-}
-
-IDistribution* GeneralDistribution::Clone() const
-{
-    return new GeneralDistribution(*this);
-}
-
-std::string GeneralDistribution::Name() const
-{
-    return "GeneralDistribution";
 }
 
 double GeneralDistribution::Density(double theX) const { return myLetter->Density(theX); }
@@ -53,33 +46,31 @@ double GeneralDistribution::Asymmetry() const { return myLetter->Asymmetry(); }
 double GeneralDistribution::Kurtosis() const { return myLetter->Kurtosis(); }
 double GeneralDistribution::RandNum() { return myLetter->RandNum(); }
 
+IDistribution* GeneralDistribution::Clone() const
+{
+    return new GeneralDistribution(*this);
+}
+
+std::string GeneralDistribution::Name() const
+{
+    return myLetter->Name();
+}
+
 void GeneralDistribution::Save(std::ostream& theOut) const
 {
     theOut << myLetter->Name() << "\n";
-    if (auto* aPersist = dynamic_cast<IPersistent*>(myLetter)) {
-        aPersist->Save(theOut);
-    }
+    dynamic_cast<IPersistent*>(myLetter)->Save(theOut);
 }
 
 void GeneralDistribution::Load(std::istream& theIn)
 {
     delete myLetter;
+    myLetter = nullptr;
     std::string aName;
     theIn >> aName;
-    
     myLetter = DistributionFactory::Instance().CreateDistribution(aName);
-    
-    if (auto* aPersist = dynamic_cast<IPersistent*>(myLetter)) {
-        aPersist->Load(theIn);
-    }
+    dynamic_cast<IPersistent*>(myLetter)->Load(theIn);
 }
 
-IDistribution& GeneralDistribution::Component()
-{
-    return *myLetter;
-}
-
-const IDistribution& GeneralDistribution::Component() const
-{
-    return *myLetter;
-}
+IDistribution& GeneralDistribution::Component() { return *myLetter; }
+const IDistribution& GeneralDistribution::Component() const { return *myLetter; }

@@ -4,6 +4,7 @@
 #include <random>
 #include <string>
 
+
 struct IDistribution
 {
     virtual ~IDistribution() = default;
@@ -15,7 +16,6 @@ struct IDistribution
     virtual double Kurtosis() const = 0;
     virtual double RandNum() = 0;
 
-    // ПУНКТ 2.1: Функция клонирования и функция возврата имени класса
     virtual IDistribution* Clone() const = 0;
     virtual std::string Name() const = 0;
 

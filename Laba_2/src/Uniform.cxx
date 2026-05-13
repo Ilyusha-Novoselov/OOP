@@ -1,4 +1,5 @@
 #include <Uniform.hxx>
+#include <DistributionFactory.hxx>
 
 #include <string>
 
@@ -44,3 +45,9 @@ void Uniform::Load(std::istream& theIn)
 IDistribution* Uniform::Clone() const { return new Uniform(*this); }
 
 std::string Uniform::Name() const { return "Uniform"; }
+
+// Саморегистрация типа в фабрике
+namespace {
+IDistribution* CreateUniform() { return new Uniform(); }
+const bool anIsRegisteredUniform = DistributionFactory::Instance().RegisterDistribution("Uniform", CreateUniform);
+}
