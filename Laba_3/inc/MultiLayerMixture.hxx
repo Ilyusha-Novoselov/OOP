@@ -9,20 +9,19 @@
 #include <utility>
 #include <random>
 
-
 class MultiLayerMixture : public IDistribution, public IPersistent
 {
 public:
     MultiLayerMixture() = default;
-    
+
     void Add(const GeneralDistribution& theDist, double theWeight);
     void Remove(size_t theIndex);
     GeneralDistribution& Component(size_t theIndex);
     const GeneralDistribution& Component(size_t theIndex) const;
-    
+
     size_t Size() const;
     double GetWeight(size_t theIndex) const;
-    
+
     double Density(double theX) const override;
     double ExpectedValue() const override;
     double Variance() const override;
@@ -42,6 +41,7 @@ private:
 
     std::vector<GeneralDistribution> myComponents;
     std::vector<double> myWeights;
+    std::vector<double> myRawWeights; // <--- НОВОЕ ПОЛЕ ДЛЯ СЫРЫХ ВЕСОВ
     std::discrete_distribution<int> myDiscreteDist;
 };
 
