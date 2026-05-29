@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(OOP LANGUAGES CXX)
+project(OOP LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,3 +9,4 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 add_subdirectory(GUI)
 add_subdirectory(Laba_1)
 add_subdirectory(Laba_2)
+add_subdirectory(Laba_3)
