@@ -123,7 +123,7 @@ void RunExperimentLaba3(const string& theTitle, const string& theDesc, IDistribu
     MultiLayerMixture& aModelR = aRobust.GetModel();
 
     // Пункт 3.4: Вывод характеристик
-    cout << "[ ПУНКТ 3.4: СРАВНЕНИЕ ХАРАКТЕРИСТИК ]\n";
+    cout << "[ СРАВНЕНИЕ ХАРАКТЕРИСТИК ]\n";
     cout << "   -> " << left << setw(20) << "Эмпирические данные"
         << "| M=" << fixed << setprecision(3) << setw(7) << aData.Mean()
         << "| D=" << setw(7) << aData.Variance()
@@ -134,14 +134,14 @@ void RunExperimentLaba3(const string& theTitle, const string& theDesc, IDistribu
     PrintMetrics("Робастная аппр.", aModelR);
 
     // Пункт 3.2: Сравнение по критериям качества
-    cout << "\n[ ПУНКТ 3.2: КРИТЕРИИ КАЧЕСТВА (Выбор числа компонент) ]\n";
+    cout << "\n[ КРИТЕРИИ КАЧЕСТВА (Выбор числа компонент) ]\n";
     cout << "   Неробастная (k=" << aNonRobust.GetComponentCount() << "): LL = "
         << aNonRobust.GetLogLikelihood() << ", AIC = " << aNonRobust.GetAIC() << ", BIC = " << aNonRobust.GetBIC() << "\n";
     cout << "   Робастная   (k=" << aRobust.GetComponentCount() << "): LL = "
         << aRobust.GetLogLikelihood() << ", AIC = " << aRobust.GetAIC() << ", BIC = " << aRobust.GetBIC() << "\n";
 
     // Пункт 3.3: Распечатка смесей через итераторы
-    cout << "\n[ ПУНКТ 3.3: СТРУКТУРА - ИСТИННОЕ РАСПРЕДЕЛЕНИЕ ]\n";
+    cout << "\n[ СТРУКТУРА - ИСТИННОЕ РАСПРЕДЕЛЕНИЕ ]\n";
     if (typeid(theTrueDist) == typeid(MultiLayerMixture)) {
         MultiLayerMixture& aTrueMix = dynamic_cast<MultiLayerMixture&>(theTrueDist);
         cout << "--- Внешний итератор (1 уровень) ---\n";
@@ -153,13 +153,13 @@ void RunExperimentLaba3(const string& theTitle, const string& theDesc, IDistribu
         cout << "   -> " << theTrueDist.Name() << " (Не является смесью. Итераторы не применимы.)\n";
     }
 
-    cout << "\n[ ПУНКТ 3.3: СТРУКТУРА - НЕРОБАСТНАЯ МОДЕЛЬ ]\n";
+    cout << "\n[ СТРУКТУРА - НЕРОБАСТНАЯ МОДЕЛЬ ]\n";
     cout << "--- Внешний итератор (1 уровень) ---\n";
     PrintShallow(aModelNR);
     cout << "--- Внутренний итератор (Все листья) ---\n";
     PrintDeep(aModelNR);
 
-    cout << "\n[ ПУНКТ 3.3: СТРУКТУРА - РОБАСТНАЯ МОДЕЛЬ ]\n";
+    cout << "\n[ СТРУКТУРА - РОБАСТНАЯ МОДЕЛЬ ]\n";
     cout << "--- Внешний итератор (1 уровень) ---\n";
     PrintShallow(aModelR);
     cout << "--- Внутренний итератор (Все листья) ---\n";
@@ -169,7 +169,7 @@ void RunExperimentLaba3(const string& theTitle, const string& theDesc, IDistribu
     Histogram aHist(aData, 60);
     string aFilePath = theOutputDir + "/" + theFileName;
     GenerateDataCSV(aFilePath, aData, aHist, theTrueDist, aModelNR, aModelR);
-    cout << "\n-> Пункт 3.5 выполнен. Плотности компонент выгружены в " << aFilePath << "\n";
+    cout << "\n-> Плотности компонент выгружены в " << aFilePath << "\n";
 }
 
 void LabTester::RunAllTests() {
