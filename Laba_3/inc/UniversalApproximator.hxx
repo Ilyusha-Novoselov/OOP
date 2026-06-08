@@ -16,21 +16,23 @@ public:
 
     MultiLayerMixture& GetModel() { return myModel; }
 
-    // Геттеры для критериев качества модели
+    /* Критерии качества модели (п. 2.2.1 методички: BIC, AIC, ICL) */
     double GetAIC() const { return myAIC; }
     double GetBIC() const { return myBIC; }
+    double GetICL() const { return myICL; }
     double GetLogLikelihood() const { return myLL; }
-    int GetComponentCount() const { return myCompCount; }
+    int    GetComponentCount() const { return myCompCount; }
 
 private:
     Empiric& myData;
     MultiLayerMixture myModel;
-    bool myIsRobust;
+    bool              myIsRobust;
 
     double myAIC;
     double myBIC;
+    double myICL;
     double myLL;
-    int myCompCount;
+    int    myCompCount;
 };
 
 #endif
