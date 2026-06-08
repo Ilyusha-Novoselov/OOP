@@ -136,18 +136,14 @@ void RunExperimentLaba3(const string& theTitle, const string& theDesc, IDistribu
     PrintMetrics("Неробастная аппр.", aModelNR);
     PrintMetrics("Робастная аппр.", aModelR);
 
-    // Пункт 3.2: Сравнение по критериям качества (BIC, AIC, ICL согласно п. 2.2.1)
-    cout << "\n[ КРИТЕРИИ КАЧЕСТВА (BIC / AIC / ICL) ]\n";
+    // Пункт 3.2: Сравнение по критериям качества (BIC, AIC)
+    cout << "\n[ КРИТЕРИИ КАЧЕСТВА (BIC / AIC) ]\n";
     cout << "   Неробастная (k=" << aNonRobust.GetComponentCount() << "):"
         << "  BIC=" << fixed << setprecision(2) << aNonRobust.GetBIC()
-        << "  AIC=" << aNonRobust.GetAIC()
-        << "  ICL=" << aNonRobust.GetICL()
-        << "  LL=" << aNonRobust.GetLogLikelihood() << "\n";
+        << "  AIC=" << aNonRobust.GetAIC() << "\n";
     cout << "   Робастная   (k=" << aRobust.GetComponentCount() << "):"
         << "  BIC=" << aRobust.GetBIC()
-        << "  AIC=" << aRobust.GetAIC()
-        << "  ICL=" << aRobust.GetICL()
-        << "  LL=" << aRobust.GetLogLikelihood() << "\n";
+        << "  AIC=" << aRobust.GetAIC() << "\n";
 
     // Пункт 3.3: Распечатка смесей через итераторы
     cout << "\n[ СТРУКТУРА - ИСТИННОЕ РАСПРЕДЕЛЕНИЕ ]\n";
